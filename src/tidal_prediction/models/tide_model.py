@@ -20,20 +20,17 @@ class TideModel:
         """Fit the model to observed tide levels."""
         if not data:
             raise ValueError("Training data must contain at least one value.")
-        first = data[0]
-        if math.isnan(first):
-            raise ValueError("Training data must not contain NaN values.")
-        total = first
-        min_level = first
-        max_level = first
+        total = data[0]
+        min_level = data[0]
+        max_level = data[0]
         for level in data[1:]:
-            if math.isnan(level):
-                raise ValueError("Training data must not contain NaN values.")
             total += level
             if level < min_level:
                 min_level = level
             if level > max_level:
                 max_level = level
+        if any(math.isnan(value) for value in (total, min_level, max_level)):
+            raise ValueError("Training data must not contain NaN values.")
         self.mean_level = total / len(data)
         self.amplitude = (max_level - min_level) / 2 if max_level != min_level else 1.0
         self.phase_offset = 0.0
