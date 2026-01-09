@@ -37,7 +37,8 @@ def load_csv(path: Path) -> List[TideSample]:
     with path.open(newline="", encoding="utf-8") as handle:
         reader = csv.DictReader(handle)
         for row in reader:
-            if not row:
+            # Skip rows where all fields are empty or whitespace-only
+            if not any((value or "").strip() for value in row.values()):
                 continue
 def _ensure_file_readable(path: Path) -> None:
     """Ensure that the given path points to an existing, regular file."""
