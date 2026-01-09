@@ -20,10 +20,15 @@ class TideModel:
         """Fit the model to observed tide levels."""
         if not data:
             raise ValueError("Training data must contain at least one value.")
-        total = 0.0
-        min_level = float("inf")
-        max_level = float("-inf")
-        for level in data:
+        first = data[0]
+        if math.isnan(first):
+            raise ValueError("Training data must not contain NaN values.")
+        total = first
+        min_level = first
+        max_level = first
+        for level in data[1:]:
+            if math.isnan(level):
+                raise ValueError("Training data must not contain NaN values.")
             total += level
             if level < min_level:
                 min_level = level
