@@ -59,12 +59,16 @@ def load_json(path: Path) -> List[TideSample]:
 
 def load_samples(path: Path) -> List[TideSample]:
     """Load tidal samples based on file extension."""
+    if not path.exists():
+        raise ValueError(f"load_samples: path does not exist: {path}")
+    if not path.is_file():
+        raise ValueError(f"load_samples: path is not a file: {path}")
     suffix = path.suffix.lower()
     if suffix == ".csv":
         return load_csv(path)
     if suffix == ".json":
         return load_json(path)
-    raise ValueError(f"Unsupported file extension: {suffix}")
+    raise ValueError(f"load_samples: unsupported file extension {suffix!r} for path: {path}")
 
 
 def as_series(samples: Sequence[TideSample]) -> tuple[List[datetime], List[float]]:
