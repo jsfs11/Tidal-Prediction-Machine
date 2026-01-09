@@ -20,9 +20,16 @@ class TideModel:
         """Fit the model to observed tide levels."""
         if not data:
             raise ValueError("Training data must contain at least one value.")
-        self.mean_level = sum(data) / len(data)
-        min_level = min(data)
-        max_level = max(data)
+        total = 0.0
+        min_level = float("inf")
+        max_level = float("-inf")
+        for level in data:
+            total += level
+            if level < min_level:
+                min_level = level
+            if level > max_level:
+                max_level = level
+        self.mean_level = total / len(data)
         self.amplitude = (max_level - min_level) / 2 if max_level != min_level else 1.0
         self.phase_offset = 0.0
         return self
