@@ -21,13 +21,13 @@ class TideModel:
         if not data:
             raise ValueError("Training data must contain at least one value.")
         first = data[0]
-        if first != first:  # NaN check
+        if math.isnan(first):
             raise ValueError("Training data must not contain NaN values.")
         total = first
         min_level = first
         max_level = first
         for level in data[1:]:
-            if level != level:  # NaN check
+            if math.isnan(level):
                 raise ValueError("Training data must not contain NaN values.")
             total += level
             if level < min_level:
