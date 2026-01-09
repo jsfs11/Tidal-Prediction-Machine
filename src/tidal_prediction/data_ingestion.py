@@ -73,9 +73,16 @@ def load_json(path: Path) -> List[TideSample]:
     except OSError as exc:
         raise OSError(f"Failed to open input file: {path}") from exc
     samples: List[TideSample] = []
-    for item in payload:
-        timestamp = _parse_timestamp(str(item["timestamp"]))
-        level = float(item["level"])
+    for index, item in enumerate(payload):
+        try:
+            timestamp = _parse_timestamp(str(item["timestamp"]))
+            level = float(item["level"])
+        except KeyError as exc:
+            # Provide a more descriptive error indicating which key is missing and at which index.
+            missing_key = exc.args[0] if exc.args else "unknown"
+            raise KeyError(
+                f"Missing key '{missing_key}' in JSON object at index {index}"
+            ) from exc
         samples.append(TideSample(timestamp=timestamp, level=level))
     return samples
 
