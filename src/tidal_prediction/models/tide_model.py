@@ -27,6 +27,7 @@ class TideModel:
         total = first
         min_level = first
         max_level = first
+        count = 1
         for level in iterator:
             if math.isnan(level):
                 raise ValueError("Training data must not contain NaN values.")
@@ -35,7 +36,8 @@ class TideModel:
                 min_level = level
             if level > max_level:
                 max_level = level
-        self.mean_level = total / len(data)
+            count += 1
+        self.mean_level = total / count
         self.amplitude = (max_level - min_level) / 2 if max_level != min_level else 1.0
         self.phase_offset = 0.0
         return self
