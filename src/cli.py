@@ -30,6 +30,8 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args = parse_args()
     input_path = Path(args.input)
+    if not input_path.is_file():
+        raise SystemExit(f"Input file does not exist: {input_path}")
     start_time = datetime.fromisoformat(args.start) if args.start else datetime.utcnow()
     result = run_simulation(
         input_path,
