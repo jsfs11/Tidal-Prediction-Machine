@@ -39,24 +39,38 @@ def load_csv(path: Path) -> List[TideSample]:
         for row in reader:
             if not row:
                 continue
-            try:
-                timestamp_raw = row["timestamp"]
-                level_raw = row["level"]
-            except KeyError as exc:
-                # Provide context about which row is malformed to aid debugging.
-                raise ValueError(
-                    f"Missing required column {exc.args[0]!r} in CSV row {reader.line_num}: {row}"
-                ) from exc
-            timestamp = _parse_timestamp(timestamp_raw.strip())
-            level = float(level_raw.strip())
-            samples.append(TideSample(timestamp=timestamp, level=level))
+def _ensure_file_readable(path: Path) -> None:
+    """Ensure that the given path points to an existing, regular file."""
+    if not path.exists() or not path.is_file():
+        raise FileNotFoundError(f"Input file not found: {path}")
+
+
+def load_csv(path: Path) -> List[TideSample]:
+    """Load tidal samples from a CSV file with timestamp,level columns."""
+    _ensure_file_readable(path)
+    samples: List[TideSample] = []
+    try:
+        with path.open(newline="", encoding="utf-8") as handle:
+            reader = csv.DictReader(handle)
+            for row in reader:
+                if not row:
+                    continue
+                timestamp = _parse_timestamp(row["timestamp"].strip())
+                level = float(row["level"].strip())
+                samples.append(TideSample(timestamp=timestamp, level=level))
+    except OSError as exc:
+        raise OSError(f"Failed to open input file: {path}") from exc
     return samples
 
 
 def load_json(path: Path) -> List[TideSample]:
     """Load tidal samples from a JSON list of objects."""
-    with path.open(encoding="utf-8") as handle:
-        payload = json.load(handle)
+    _ensure_file_readable(path)
+    try:
+        with path.open(encoding="utf-8") as handle:
+            payload = json.load(handle)
+    except OSError as exc:
+        raise OSError(f"Failed to open input file: {path}") from exc
     samples: List[TideSample] = []
     for item in payload:
         timestamp = _parse_timestamp(str(item["timestamp"]))
