@@ -115,7 +115,3 @@ def as_series(samples: Sequence[TideSample]) -> tuple[List[datetime], List[float
     Backwards-compatible wrapper for ``split_timestamps_and_levels``.
 
     Returns parallel lists of timestamps and levels for downstream modeling.
-    """
-    return split_timestamps_and_levels(samples)
-def ensure_samples(data: Iterable[TideSample]) -> List[TideSample]:
-    return list(data)
