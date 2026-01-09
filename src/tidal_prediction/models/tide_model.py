@@ -29,12 +29,15 @@ class TideModel:
 
     def predict(self, times: Iterable[datetime]) -> List[float]:
         """Predict tide levels for the given timestamps."""
-        predictions: List[float] = []
-        for timestamp in times:
-            seconds = _to_epoch_seconds(timestamp)
-            angle = 2 * math.pi * seconds / _M2_PERIOD_SECONDS + self.phase_offset
-            predictions.append(self.mean_level + self.amplitude * math.sin(angle))
-        return predictions
+        return [
+            self.mean_level
+            + self.amplitude
+            * math.sin(
+                2 * math.pi * _to_epoch_seconds(timestamp) / _M2_PERIOD_SECONDS
+                + self.phase_offset
+            )
+            for timestamp in times
+        ]
 
 
 # Period (in seconds) of the principal lunar semi-diurnal (M2) tidal constituent.
