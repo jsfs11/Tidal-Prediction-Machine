@@ -71,12 +71,21 @@ def load_samples(path: Path) -> List[TideSample]:
     raise ValueError(f"load_samples: unsupported file extension {suffix!r} for path: {path}")
 
 
-def as_series(samples: Sequence[TideSample]) -> tuple[List[datetime], List[float]]:
-    """Return timestamps and levels for downstream modeling."""
+def split_timestamps_and_levels(
+    samples: Sequence[TideSample],
+) -> tuple[List[datetime], List[float]]:
+    """Split tidal samples into parallel timestamp and level sequences."""
     times = [sample.timestamp for sample in samples]
     levels = [sample.level for sample in samples]
     return times, levels
 
 
+def as_series(samples: Sequence[TideSample]) -> tuple[List[datetime], List[float]]:
+    """
+    Backwards-compatible wrapper for ``split_timestamps_and_levels``.
+
+    Returns parallel lists of timestamps and levels for downstream modeling.
+    """
+    return split_timestamps_and_levels(samples)
 def ensure_samples(data: Iterable[TideSample]) -> List[TideSample]:
     return list(data)
