@@ -23,7 +23,7 @@ class TideModel:
         self.mean_level = sum(data) / len(data)
         min_level = min(data)
         max_level = max(data)
-        self.amplitude = (max_level - min_level) / 2 or 1.0
+        self.amplitude = (max_level - min_level) / 2 if max_level != min_level else 1.0
         self.phase_offset = 0.0
         return self
 
