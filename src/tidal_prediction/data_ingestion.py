@@ -39,8 +39,16 @@ def load_csv(path: Path) -> List[TideSample]:
         for row in reader:
             if not row:
                 continue
-            timestamp = _parse_timestamp(row["timestamp"].strip())
-            level = float(row["level"].strip())
+            try:
+                timestamp_raw = row["timestamp"]
+                level_raw = row["level"]
+            except KeyError as exc:
+                # Provide context about which row is malformed to aid debugging.
+                raise ValueError(
+                    f"Missing required column {exc.args[0]!r} in CSV row {reader.line_num}: {row}"
+                ) from exc
+            timestamp = _parse_timestamp(timestamp_raw.strip())
+            level = float(level_raw.strip())
             samples.append(TideSample(timestamp=timestamp, level=level))
     return samples
 
