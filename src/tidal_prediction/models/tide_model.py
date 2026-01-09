@@ -37,6 +37,8 @@ class TideModel:
         return predictions
 
 
+# Period (in seconds) of the principal lunar semi-diurnal (M2) tidal constituent.
+# 12.42 hours is the commonly used approximate M2 period in harmonic tide models.
 _M2_PERIOD_SECONDS = 12.42 * 3600
 
 
